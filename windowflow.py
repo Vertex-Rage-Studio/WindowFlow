@@ -53,19 +53,10 @@ def restore_session(config_parsed):
     Restores windows layout based on current config file
     '''
     for c in config_parsed:
-        app_name = c[0]
-        x,y,w,h = c[1]
-        delay = c[2]
-        shell = c[3]
-        args = c[4]
+        app_name, (x, y, w, h), delay, shell, args = c
         
-        params = [app_name]
-        params.extend(args)
-
-        if shell:
-            subprocess.Popen(params, creationflags=CREATE_NEW_CONSOLE)
-        else:
-            subprocess.Popen(params)
+        params = [app_name, *args]
+        subprocess.Popen(params, creationflags=CREATE_NEW_CONSOLE if shell else 0)
 
         time.sleep(delay) # that's stupid, but it works for now
         active = win32gui.GetForegroundWindow()
@@ -81,9 +72,6 @@ def main():
     config_parsed = parse_config(config_file)
 
     restore_session(config_parsed)
-
-
-
 
 if __name__ == "__main__":
     main()
