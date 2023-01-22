@@ -10,31 +10,45 @@ def parse_config(filename):
     '''
     Parses the config file.
 
-    It doesn't handle any errors for now.
+    It handles errors for now.
     Line format:
     #appname|x,y,width,height|delay till app becomes responsive(sec)|arg1|arg2|argn
     '''
-
     parsed_config = []
-    for line in open(filename):
-        
-        line = line.strip()
-        if line[0] == '#' or len(line) == 0: 
-            continue
-        params = line.split('|')
-
-        appname = params[0]
-        x,y, width, height = params[1].split(',')
-        x = int(x)
-        y = int(y)
-        width = int(width)
-        height = int(height)                
-        delay = float(params[2])
-        arguments = params[3:]
-
-        parsed_config.append( (appname, (x,y,width,height), delay, arguments ) )
-
+    try:
+        # check if config file exists 
+        if not os.path.exists(filename):
+            raise FileNotFoundError(f"Config file {filename} not found.")
+        for line in open(filename):
+            line = line.strip()
+            # if the line is comment or empty, skip it
+            if line[0] == '#' or len(line) == 0: 
+                continue
+            params = line.split('|')
+            # check if the line has the correct format
+            if len(params) < 4:
+                raise ValueError(f"Invalid line format in config file: {line}")
+            appname = params[0]
+            try:
+                x,y, width, height = params[1].split(',')
+                x = int(x)
+                y = int(y)
+                width = int(width)
+                height = int(height)                
+            except ValueError:
+                raise ValueError(f"Invalid line format in config file: {line}")
+            try:
+                delay = float(params[2])
+            except ValueError:
+                raise ValueError(f"Invalid delay value in config file: {line}")
+            arguments = params[3:]
+            parsed_config.append( (appname, (x,y,width,height), delay, arguments ) )
+    except FileNotFoundError as e:
+        print(e)
+    except ValueError as e:
+        print(e)
     return parsed_config
+
 
 def get_set_of_window_titles(hwnd, output):
     '''
