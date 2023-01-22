@@ -9,7 +9,7 @@ I often have multiple projects running simultaneously and it always frustrated m
 
 Inspired by Curtis Holt's recent video (https://www.youtube.com/watch?v=SDawvvcx1dE), I began searching for a solution to this problem. However, it seemed that there were none available for Windows or they were quite expensive for such a simple functionality. After discussing with Mathew in Curtis's Discord community, we decided to create our own solution.
 
-Here it is - the first version, which has relatively simple functionality. It launches all the apps based on a manually written config file and places them in set positions. More updates will come in the future."
+Here it is - the first version, which has relatively simple functionality. It launches all the apps based on a manually written config file and places them in set positions. More updates will come in the future (hopefully).
 
 # Roadmap
 
