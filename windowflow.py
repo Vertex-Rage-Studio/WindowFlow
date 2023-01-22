@@ -6,12 +6,14 @@ import win32api
 import win32con
 import time
 
+from subprocess import CREATE_NEW_CONSOLE
+
 def parse_config(filename):
     '''
     Parses the config file.
 
     chatgpt was used to handle error handling and simplification of this function
-    
+
     Line format:
     #appname|x,y,width,height|delay till app becomes responsive(sec)|arg1|arg2|argn
     '''
@@ -25,10 +27,11 @@ def parse_config(filename):
                 line = line.strip()
                 if line.startswith("#") or not line:
                     continue
-                appname, window_position, delay, *arguments = line.split("|")
+                appname, window_position, delay, shell, *arguments = line.split("|")
                 x, y, width, height = map(int, window_position.split(","))
                 delay = float(delay)
-                parsed_config.append((appname, (x, y, width, height), delay, arguments))
+                shell = bool(shell)
+                parsed_config.append((appname, (x, y, width, height), delay, shell, arguments))
     except FileNotFoundError as e:
         print(e)
     except ValueError as e:
@@ -53,12 +56,17 @@ def restore_session(config_parsed):
         app_name = c[0]
         x,y,w,h = c[1]
         delay = c[2]
-        args = c[3]
+        shell = c[3]
+        args = c[4]
         
         params = [app_name]
         params.extend(args)
 
-        subprocess.Popen(params)
+        if shell:
+            subprocess.Popen(params, creationflags=CREATE_NEW_CONSOLE)
+        else:
+            subprocess.Popen(params)
+
         time.sleep(delay) # that's stupid, but it works for now
         active = win32gui.GetForegroundWindow()
         win32gui.SetWindowPos(active, None, x,y,w,h, win32con.SWP_SHOWWINDOW)
