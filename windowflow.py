@@ -59,6 +59,10 @@ def restore_session(config_parsed):
         subprocess.Popen(params, creationflags=CREATE_NEW_CONSOLE if shell else 0)
 
         time.sleep(delay) # that's stupid, but it works for now
+
+        if x == y == w == h == 0: # for 0,0,0,0 don't set size, just launch the app
+            continue
+        
         active = win32gui.GetForegroundWindow()
         win32gui.SetWindowPos(active, None, x,y,w,h, win32con.SWP_SHOWWINDOW)
     
