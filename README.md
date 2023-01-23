@@ -28,13 +28,16 @@ cd WindowFlow
 
 # Running WindowFlow
 
+## Running from command line
+### Restoring session
+
 To run the example confing file you simply type:
 
 ```
 python windowflow.py -c config_test.cfg
 ```
 
-The example config file will run: 
+Config file has simple line based format, where `|` is used as a separator. See [example of config file](https://github.com/Vertex-Rage-Studio/WindowFlow/blob/main/config_test.cfg) for description and example.The example config file will run: 
 - explorer.exe pointint at C:\Users at location (100, 100) and size of window of (900,700)
 - it will open 2 new tabs in firefox, one pointing to google, one to bing (or if it's not launched - should launch a new window and open those 2 tabs)
 - it will run another explorer.exe (without path) at (500,300) and size of window of (900, 700)
@@ -46,8 +49,29 @@ Of course you will not have the .blend and .pur file or you might not have even 
 
 There is also a minimalistic config file provided [provided](https://github.com/Vertex-Rage-Studio/WindowFlow/blob/main/mini.cfg). Launching with this one, will just open 2 firefox tabs (pointing to google.com and bing.com) and 2 explorer windows.
 
+### Storing session
+
+To store current in `test.cfg` session use:
+```
+python windowflow.py -m store-session -c test.cfg
+```
+The resulting config file will need tweaking. 
+- At the moment it gets all the executable paths to top level windows with titles (some of it you will want to remove)
+- If any of the executalbe needs command line arguments (like a path or filename or URL to open) you will need to add those arguments manually. See [example of config file](https://github.com/Vertex-Rage-Studio/WindowFlow/blob/main/config_test.cfg)
+- If any application is usually taking more than 1 sec to launch, tweak the dealy (3rd element)
+- For any process that needs to be run in separate shell (cmd window) you need to flip the 4th argument to True
+
+
 # Roadmap
 
-- ~~step 1: - make it launch apps based on manually written config file~~ Done
+- ~~step 1: - make it launch apps based on manually written config file~~ **Done**
 - step 2: tool for helping in writing the config file
 - step 3: UX
+- step 4: polish (i.e., we might never get to it)
+
+# Polish feature list
+Bellow are features that we think should be added in the polishing phase
+- preserving windows grouping (this will probably be quite complex to implement)
+- 
+
+
