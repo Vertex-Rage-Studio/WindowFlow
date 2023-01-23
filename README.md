@@ -11,11 +11,28 @@ Inspired by Curtis Holt's recent video (https://www.youtube.com/watch?v=SDawvvcx
 
 Here it is - the first version, which has relatively simple functionality. It launches all the apps based on a manually written config file and places them in set positions. More updates will come in the future (hopefully).
 
-It needs python and depends on pywin32 (https://pypi.org/project/pywin32/) for it's functionality. 
+# Requirements
+
+For now as we don't provide binary builds the following python dependencies need to be installed:
+- It needs python and depends on pywin32 (https://pypi.org/project/pywin32/) for it's functionality. 
+
+I recommend using conda, e.g.,
+```
+conda create --name WindowFlow
+conda activate WindowFlow
+conda install pywin32
+cd $SOMEWHERE # where you want to have the WindowFlow
+git clone https://github.com/Vertex-Rage-Studio/WindowFlow.git
+cd WindowFlow
+```
+
+# Running WindowFlow
 
 To run the example confing file you simply type:
 
-python windowflow.py config_test.cfg
+```
+python windowflow.py -c config_test.cfg
+```
 
 The example config file will run: 
 - explorer.exe pointint at C:\Users at location (100, 100) and size of window of (900,700)
@@ -26,6 +43,8 @@ The example config file will run:
 - it will launch pureref with D:\AssetsLibrary\Ref\low-poly-graveyard.pur on the second screen and will make it's window take almost full screen
 
 Of course you will not have the .blend and .pur file or you might not have even firefox installed, so adjust the config to your needs.
+
+There is also a minimalistic config file provided [provided](https://github.com/Vertex-Rage-Studio/WindowFlow/blob/main/mini.cfg). Launching with this one, will just open 2 firefox tabs (pointing to google.com and bing.com) and 2 explorer windows.
 
 # Roadmap
 
