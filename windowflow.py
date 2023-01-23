@@ -1,5 +1,6 @@
 import sys
 import os
+import argparse
 import subprocess
 import win32gui
 import win32api
@@ -69,7 +70,7 @@ def restore_session(config_parsed):
 def write_config(config_file):
     '''
     With help of chatgpt - not working fully yet (no paths to exe, no delays and shell params), 
-    but putting it up for future reference
+    but putting it up for future reference.
     '''
     try:
         with open(config_file, "w", encoding='utf-8') as f:
@@ -90,15 +91,23 @@ def write_config(config_file):
         print("Error:", e)
 
 def main():
-    config_file = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--mode", default="restore-session", choices=["store-session", "restore-session"], help="Mode")
+    parser.add_argument("-c", "--config", required=True, help="Path to config file")
+    args = parser.parse_args()
+
+    config_file = args.config
+
+    if args.mode == "store-session":
+        print("Not yet implemented")
+    else:
+        config_parsed = parse_config(config_file)
+        restore_session(config_parsed)
+
 
     # start_windows = set([])
     # win32gui.EnumWindows(get_set_of_window_titles, start_windows)
     # print(start_windows)
-
-    config_parsed = parse_config(config_file)
-
-    restore_session(config_parsed)
 
 if __name__ == "__main__":
     main()
