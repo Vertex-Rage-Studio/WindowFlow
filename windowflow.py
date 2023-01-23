@@ -1,9 +1,11 @@
 import sys
 import os
+import argparse
 import subprocess
 import win32gui
 import win32api
 import win32con
+import win32process
 import time
 
 from subprocess import CREATE_NEW_CONSOLE
@@ -22,7 +24,7 @@ def parse_config(filename):
         # check if config file exists 
         if not os.path.exists(filename):
             raise FileNotFoundError(f"Config file {filename} not found.")
-        with open(filename) as f:
+        with open(filename, "r", encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 if line.startswith("#") or not line:
@@ -65,17 +67,58 @@ def restore_session(config_parsed):
         
         active = win32gui.GetForegroundWindow()
         win32gui.SetWindowPos(active, None, x,y,w,h, win32con.SWP_SHOWWINDOW)
-    
+
+def write_config(config_file, default_delay=1):
+    '''
+    With help of chatgpt - not working fully yet (no paths to exe, no delays and shell params), 
+    but putting it up for future reference.
+    '''    
+    try:
+        with open(config_file, "w", encoding='utf-8') as f:
+            f.write("#path_to_exe|x,y,width,height|delay|shell|arg1|arg2|argn\n")
+            def enum_cb(hwnd, windows):
+                if win32gui.IsWindowVisible(hwnd):
+                    title = win32gui.GetWindowText(hwnd)
+                    # check if the title is empty
+                    if title:
+                        rect = win32gui.GetWindowRect(hwnd)
+                        x, y, width, height = rect
+                        pid = win32process.GetWindowThreadProcessId(hwnd)
+                        handle = win32api.OpenProcess(win32con.PROCESS_QUERY_LIMITED_INFORMATION, False, pid[-1])
+                        exe = win32process.GetModuleFileNameEx(handle, 0)
+                        windows.append((exe, (x, y, width, height)))
+            windows = []
+            win32gui.EnumWindows(enum_cb, windows)
+            for exe, (x, y, width, height) in windows:
+                f.write(f"{exe}|{x},{y},{width},{height}|{default_delay}|False|\n")
+    except Exception as e:
+        print("Error:", e)
+
+
 def main():
-    config_file = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--mode", default="restore-session", choices=["store-session", "restore-session"], help="Mode")
+    parser.add_argument("-c", "--config", required=True, help="Path to config file")
+    args = parser.parse_args()
+
+    config_file = args.config
+
+    if args.mode == "store-session":
+        print("!!!!!!!!!!")
+        print("It works, kinda, but is work-in-progress. Use at your own risk for now")
+        print("!!!!!!!!!!")
+
+        print("Grabbing config and writting file")
+        write_config(config_file)
+        print("All done")
+    else:
+        config_parsed = parse_config(config_file)
+        restore_session(config_parsed)
+
 
     # start_windows = set([])
     # win32gui.EnumWindows(get_set_of_window_titles, start_windows)
     # print(start_windows)
-
-    config_parsed = parse_config(config_file)
-
-    restore_session(config_parsed)
 
 if __name__ == "__main__":
     main()
