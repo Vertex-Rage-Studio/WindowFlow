@@ -65,7 +65,30 @@ def restore_session(config_parsed):
         
         active = win32gui.GetForegroundWindow()
         win32gui.SetWindowPos(active, None, x,y,w,h, win32con.SWP_SHOWWINDOW)
-    
+
+def write_config(config_file):
+    '''
+    With help of chatgpt - not working fully yet (no paths to exe, no delays and shell params), 
+    but putting it up for future reference
+    '''
+    try:
+        with open(config_file, "w", encoding='utf-8') as f:
+            f.write("#appname|x,y,width,height|arg1|arg2|argn\n")
+            def enum_cb(hwnd, windows):
+                if win32gui.IsWindowVisible(hwnd):
+                    title = win32gui.GetWindowText(hwnd)
+                    # check if the title is empty
+                    if title:
+                        rect = win32gui.GetWindowRect(hwnd)
+                        x, y, width, height = rect
+                        windows.append((title, (x, y, width, height)))
+            windows = []
+            win32gui.EnumWindows(enum_cb, windows)
+            for title, (x, y, width, height) in windows:
+                f.write(f"{title}|{x},{y},{width},{height}|\n")
+    except Exception as e:
+        print("Error:", e)
+
 def main():
     config_file = sys.argv[1]
 
