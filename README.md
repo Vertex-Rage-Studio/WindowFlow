@@ -11,6 +11,22 @@ Inspired by Curtis Holt's recent video (https://www.youtube.com/watch?v=SDawvvcx
 
 Here it is - the first version, which has relatively simple functionality. It launches all the apps based on a manually written config file and places them in set positions. More updates will come in the future (hopefully).
 
+It needs python and depends on pywin32 (https://pypi.org/project/pywin32/) for it's functionality. 
+
+To run the example confing file you simply type:
+
+python windowflow.py config_test.cfg
+
+The example config file will run: 
+- explorer.exe pointint at C:\Users at location (100, 100) and size of window of (900,700)
+- it will open 2 new tabs in firefox, one pointing to google, one to bing (or if it's not launched - should launch a new window and open those 2 tabs)
+- it will run another explorer.exe (without path) at (500,300) and size of window of (900, 700)
+- it will launch new firefox window, open blender.org site and move it to the 2nd screen on the left (example config assumes that you have one)
+- it will launch Blender with D:\tmp\test.blend, and move it to (0,0) and set it's size to (2500,1380)
+- it will launch pureref with D:\AssetsLibrary\Ref\low-poly-graveyard.pur on the second screen and will make it's window take almost full screen
+
+Of course you will not have the .blend and .pur file or you might not have even firefox installed, so adjust the config to your needs.
+
 # Roadmap
 
 - ~~step 1: - make it launch apps based on manually written config file~~ Done
