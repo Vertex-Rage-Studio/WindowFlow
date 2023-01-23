@@ -5,6 +5,7 @@ import subprocess
 import win32gui
 import win32api
 import win32con
+import win32process
 import time
 
 from subprocess import CREATE_NEW_CONSOLE
@@ -23,7 +24,7 @@ def parse_config(filename):
         # check if config file exists 
         if not os.path.exists(filename):
             raise FileNotFoundError(f"Config file {filename} not found.")
-        with open(filename) as f:
+        with open(filename, "r", encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 if line.startswith("#") or not line:
@@ -67,14 +68,14 @@ def restore_session(config_parsed):
         active = win32gui.GetForegroundWindow()
         win32gui.SetWindowPos(active, None, x,y,w,h, win32con.SWP_SHOWWINDOW)
 
-def write_config(config_file):
+def write_config(config_file, default_delay=1):
     '''
     With help of chatgpt - not working fully yet (no paths to exe, no delays and shell params), 
     but putting it up for future reference.
-    '''
+    '''    
     try:
         with open(config_file, "w", encoding='utf-8') as f:
-            f.write("#appname|x,y,width,height|arg1|arg2|argn\n")
+            f.write("#path_to_exe|x,y,width,height|delay|shell|arg1|arg2|argn\n")
             def enum_cb(hwnd, windows):
                 if win32gui.IsWindowVisible(hwnd):
                     title = win32gui.GetWindowText(hwnd)
@@ -82,13 +83,17 @@ def write_config(config_file):
                     if title:
                         rect = win32gui.GetWindowRect(hwnd)
                         x, y, width, height = rect
-                        windows.append((title, (x, y, width, height)))
+                        pid = win32process.GetWindowThreadProcessId(hwnd)
+                        handle = win32api.OpenProcess(win32con.PROCESS_QUERY_LIMITED_INFORMATION, False, pid[-1])
+                        exe = win32process.GetModuleFileNameEx(handle, 0)
+                        windows.append((exe, (x, y, width, height)))
             windows = []
             win32gui.EnumWindows(enum_cb, windows)
-            for title, (x, y, width, height) in windows:
-                f.write(f"{title}|{x},{y},{width},{height}|\n")
+            for exe, (x, y, width, height) in windows:
+                f.write(f"{exe}|{x},{y},{width},{height}|{default_delay}|False|\n")
     except Exception as e:
         print("Error:", e)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -99,7 +104,13 @@ def main():
     config_file = args.config
 
     if args.mode == "store-session":
-        print("Not yet implemented")
+        print("!!!!!!!!!!")
+        print("It works, kinda, but is work-in-progress. Use at your own risk for now")
+        print("!!!!!!!!!!")
+
+        print("Grabbing config and writting file")
+        write_config(config_file)
+        print("All done")
     else:
         config_parsed = parse_config(config_file)
         restore_session(config_parsed)
