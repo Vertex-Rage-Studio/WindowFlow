@@ -1,52 +1,50 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QAction
-import os
-import subprocess
+from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QAction, QMainWindow
+import sys
 
-path = "./Configs"
-dir_list = os.listdir(path)
+class WinFlow:
 
-app = QApplication([])
-app.setQuitOnLastWindowClosed(False)
+    path = "./Configs"
 
-# Adding an icon
-icon = QIcon("Logo.png")
+    def __init__(self, app):
+        self.app = app
+        self.initUI()
+        
 
-# Adding item on the menu bar
-tray = QSystemTrayIcon()
-tray.setIcon(icon)
-tray.setVisible(True)
+    def initUI(self):
+        self.icon = QIcon("Logo.png")
 
-# Creating the options
-menu = QMenu()
-option2 = QAction("Save")
+        self.tray = QSystemTrayIcon()
+        self.tray.setIcon(self.icon)
+        self.tray.setVisible(True)
 
-for i in dir_list:
-    count = 1
-    string = str(count)
-    (string) = QAction(i)
-    menu.addAction(i)
-    count += 1
+        self.menu = QMenu()
 
-menu.addSeparator()
-menu.addAction(option2)
+        self.setup_stored_configs()
 
-# Runs Load Script
-file = QAction()
-#file.triggered.connect(
-#    subprocess.run('python windowflow.py -c' + file.text())
-#)
-# To quit the app
-quit = QAction("Quit")
-quit.triggered.connect(app.quit)
-menu.addAction(quit)
+        self.menu.addSeparator()
 
-menu.setStyleSheet(
-    "background-color: rgb(20, 20, 20);"
-    "border: 1px solid rgb(40, 40, 40);"
-    "color: rgb(150, 150, 150);"
-)
-# Adding options to the System Tray
-tray.setContextMenu(menu)
+        self.setup_menu_capture()
+        self.setup_menu_quit()
+        
+        self.tray.setContextMenu(self.menu)
 
-app.exec_()
+    def setup_stored_configs(self):
+        self.temp = QAction("TODO: populate with configs")
+        self.menu.addAction(self.temp)
+
+    def setup_menu_capture(self):
+        self.save = QAction("Capture")
+        self.menu.addAction(self.save)
+
+    def setup_menu_quit(self):
+        self.quit = QAction("Quit")
+        self.quit.triggered.connect(self.app.quit)        
+        self.menu.addAction(self.quit)
+
+if __name__ == '__main__':
+    app = QApplication([sys.argv])
+    app.setQuitOnLastWindowClosed(False)
+
+    winflow = WinFlow(app)
+    sys.exit(app.exec_())
