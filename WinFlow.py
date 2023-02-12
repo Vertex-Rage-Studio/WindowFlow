@@ -1,5 +1,5 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QAction
 import os
 import subprocess
 
@@ -33,9 +33,9 @@ menu.addAction(option2)
 
 # Runs Load Script
 file = QAction()
-file.triggered.connect(
-    subprocess.run('python windowflow.py -c' + file.text())
-)
+#file.triggered.connect(
+#    subprocess.run('python windowflow.py -c' + file.text())
+#)
 # To quit the app
 quit = QAction("Quit")
 quit.triggered.connect(app.quit)
